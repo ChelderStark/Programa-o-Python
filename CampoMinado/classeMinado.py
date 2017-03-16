@@ -8,13 +8,13 @@ class CampMinado:
         self.coluna = coluna
         self.minas = minas
 
-#faz a inserção das variáveis quando elas forem zeradas
+#faz a inserção das variáveis
     def insereDados(self, linha, coluna, minas):
         self.linha = linha
         self.coluna = coluna
         self.minas = minas
 
-    #cria um tabuleiro vazio
+#cria um tabuleiro vazio com as dimensões especificadas
     def criaCampo(self, matriz):
         for i in range(0, self.linha):
             linha = []
@@ -28,21 +28,25 @@ class CampMinado:
     def poeMinas(self, matriz):
 
         for i in range(1,self.minas+1):
-            p = random.randint(0,self.linha-1)
-            q = random.randint(0,self.coluna-1)
+            p = random.randint(0,self.linha-1)#escolhe uma posição na linha aleatória
+            q = random.randint(0,self.coluna-1)#escolhe uma posição na coluna aleatória
             if matriz[p][q] != 'B':
                 matriz[p][q] = 'B'
 
         return matriz
 
 
-#mostra o campo sobreposto ao campo minado
+#mostra o campo sobreposto ao campo minado com as jogadas feitas
     def mostraCampoSMinas(self, campo):
         cont = 1
         col = "\a| "
+        lin = ""
         for i in range(1, self.coluna + 1):
             col += ("\t%s" % i)
+            lin += ("_"*i)
         print(col)
+        print(lin)
+
         for i in campo:
             linha = i
             l1 = ("%d| " % cont)
@@ -51,7 +55,7 @@ class CampMinado:
             print(l1)
             cont += 1
 
-#tabuleiro onde vai estar as minas e as jogadas
+# tabuleiro onde vai estar as minas e as jogadas
     def mostraCampoComMinas(self, campo):
         cont = 1
         col = "\a| "
@@ -79,12 +83,18 @@ class CampMinado:
 
 #jogadas que são realizadas no principal
     def escolha(self,linha, coluna, matrizB, matrizM):
-        if matrizM[linha-1][coluna-1] == "B":
-            return False
+
+        if linha.isnumeric() and coluna.isnumeric():
+
+            if matrizM[int(linha)-1][int(coluna)-1] == "B":#verifica se nas coordenadas existe mina
+                return 0
+            else:
+                matrizM[int(linha)-1][int(coluna)-1] = "*"
+                matrizB[int(linha)-1][int(coluna)-1] = "*"
+                return 1
         else:
-            matrizM[linha-1][coluna-1] = "*"
-            matrizB[linha-1][coluna-1] = "*"
-            return True
+            return 2
+
 
 #zera o arquivo e põe o valor de 0 na primeira linha
     def zeraArquivo(self):
@@ -117,13 +127,13 @@ class CampMinado:
         campo = []
         camp2 = []
         arq = open("salvo.txt", 'r')
-        linha1 = arq.readline()
-        linha2 = arq.readline()
-        linha2 = linha2.split(",")
-        self.linha = int(linha2[0])
-        self.coluna = int(linha2[1])
+        linha1 = arq.readline()#lê a primeira linha que está as jogadas
+        linha2 = arq.readline()#lê a segunda linha que esta as linhas e colunas
+        linha2 = linha2.split(",")#cria uma lista dividida da linha 2
+        self.linha = int(linha2[0])#pega a primeira posição e joga em linha
+        self.coluna = int(linha2[1])#pega a segunda posição e joga em coluna
 
-        for lin in arq:
+        for lin in arq:#pega o arquivo salvo e transforma em matriz
             linhas = []
             for i in lin:
                 if i != '\n':
